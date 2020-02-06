@@ -1,0 +1,19 @@
+version: "2"
+
+services:
+    devpi:
+        build: devpi/
+        volumes:
+            - ./data/devpi:/data
+        environment:
+            READ_USER:
+            READ_PASSWORD:
+    nginx:
+        build: nginx/
+        links:
+            - devpi
+        volumes_from:
+            - devpi
+        ports:
+            - "80:80"
+            - "443:443"
