@@ -18,18 +18,7 @@ function initialize_devpi {
     devpi index -y -c public pypi_whitelist='*'
     devpi-server --stop --serverdir /data/server
     devpi-server --status --serverdir /data/server
-}
-
-function initialize_user {
-    if [ -z "${READ_USER}" ]; then
-        echo "No READ_USER defined"
-        exit 1
-    fi
-    if [ -z "${READ_PASSWORD}" ]; then
-        echo "No READ_PASSWORD defined"
-        exit 1
-    fi
-    htpasswd -cb /data/htpasswd "${READ_USER}" "${READ_PASSWORD}"
+    htpasswd -cb /data/htpasswd root "${ROOT_PASSWORD}"
 }
 
 if [ -f "/data/.root_password" ]; then
@@ -45,8 +34,8 @@ if [ ! -f /data/server/.serverversion ]; then
     initialize_devpi
 fi
 
-if [ ! -f /data/htpasswd ]; then
-    initialize_user
+if [ -n "${READ_USER:-}" ] && [ -n "${READ_PASSWORD:-}" ]; then
+    htpasswd -b /data/htpasswd "${READ_USER}" "${READ_PASSWORD}"
 fi
 
 exec devpi-server --restrict-modify root --serverdir /data/server --host 0.0.0.0 --port 8000 --theme semantic-ui
