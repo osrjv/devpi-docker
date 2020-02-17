@@ -13,6 +13,7 @@ sed -i -e "s/__servername__/${SERVER_NAME}/g" /etc/nginx/nginx.conf
 sed -i -e "s/__servername__/${SERVER_NAME}/g" /etc/nginx/nginx-https.conf
 
 # Start non-https nginx to renew certificates
+echo "Starting nginx without https"
 nginx
 
 # Wait for files to appear
@@ -35,6 +36,8 @@ done
 sleep 15
 
 # Start proper nginx
+echo "Restarting nginx with https"
 pkill nginx
+sleep 1
 cp /etc/nginx/nginx-https.conf /etc/nginx/nginx.conf
 exec nginx -g "daemon off;"
